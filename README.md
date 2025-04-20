@@ -10,6 +10,8 @@ Humans don't usually like overspending and often only want to buy what they need
 
 I used the **Amazon Sales Dataset** published by `KARKAVELRAJA J` on Kaggle. This dataset contains rich information about products, users, and their reviews.
 
+🔗 [Kaggle Dataset Link](https://www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset)
+
 ### Raw Dataset
 
 - Rows: 1465
@@ -43,6 +45,7 @@ I used the **Amazon Sales Dataset** published by `KARKAVELRAJA J` on Kaggle. Thi
 ```python
 amazon_df.head(2)
 ```
+![image](https://github.com/user-attachments/assets/90340030-2ca5-4bc2-adb5-4c6c71a92a3d)
 
 This shows the first two rows with multiple `user_id`, `user_name`, etc., as comma-separated lists. We later explode these values.
 
@@ -51,6 +54,7 @@ This shows the first two rows with multiple `user_id`, `user_name`, etc., as com
 ```python
 amazon_df.info()
 ```
+![image](https://github.com/user-attachments/assets/f8389317-e788-4014-ad14-05ccfac8b4e6)
 
 Reveals all columns are non-null except for `rating_count` which has 2 missing values.
 
@@ -73,6 +77,12 @@ amazon_df.describe()
 **Matrix Completion** is a technique used in recommendation systems to **fill in missing values** in the user-item matrix. Most users rate only a few products. So we assume the overall user-item matrix is low-rank and try to complete the matrix by estimating missing entries using techniques like matrix factorization.
 
 We generate all possible user-product pairs to simulate this matrix.
+
+### Why Matrix Completion?
+
+In real-world recommendation systems, most of the user-item interactions are missing — that is, users only rate a small subset of products. In our dataset, we had over 12 million missing values. Matrix completion allows us to mathematically estimate the missing ratings under the assumption that user preferences and item characteristics lie in a low-dimensional space. This is fundamental in collaborative filtering and is widely used in platforms like Netflix and Amazon.
+
+By simulating the entire user-product interaction matrix and estimating the missing values, we can recommend products that the user has not yet rated but is likely to enjoy.
 
 ### Step 1: Exploding User IDs
 
@@ -106,6 +116,7 @@ amazon_recomm_df = pairs.merge(
 product_map = amazon_recommender_df[['product_id','product_name']].drop_duplicates()
 amazon_recomm_df = amazon_recomm_df.merge(product_map, on='product_id', how='left')
 ```
+![image](https://github.com/user-attachments/assets/fc07b92b-6c2c-4601-b9a0-42e6d642b733)
 
 - Final Shape: **12,226,550 rows**
 - Over 12 million missing ratings (we'll fill them using modeling)
